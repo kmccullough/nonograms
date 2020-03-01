@@ -1,0 +1,10 @@
+# Packaged Dependencies
+/node_modules
+
+# Log & Analysis
+*.log
+
+# Secrets
+.gitsecret/keys/random_seed
+!*.secret
+*.pem

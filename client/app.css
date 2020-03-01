@@ -1,0 +1,98 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.4rem;
+  background-color: #222;
+  color: #ccc;
+}
+
+#app {
+  height: 100%;
+  display: grid;
+  grid-template-areas:
+    'header'
+    'chat-log'
+    'game-list'
+    'chat-input'
+  ;
+  grid-template-rows: min-content 1fr 2fr min-content;
+}
+
+#header {
+  grid-area: header;
+  border-bottom: 2px solid #444;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: .7rem;
+}
+
+#chat-log {
+  grid-area: chat-log;
+  border-bottom: 2px solid #444;
+  padding: .7rem;
+  overflow-y: scroll;
+}
+
+#game-list {
+  grid-area: game-list;
+}
+
+#chat-input {
+  grid-area: chat-input;
+  display: grid;
+  align-self: end;
+  grid-template-areas: 'chat chat-send';
+  grid-template-columns: auto min-content;
+}
+
+#chat, #chat-send {
+  width: 100%;
+  margin: 0;
+  padding: .7rem;
+  font-size: 1.2rem;
+  border: 2px solid #999;
+  border-bottom: 0;
+  box-sizing: border-box;
+  -webkit-appearance: none; /* For iOS */
+  border-radius: 0; /* For iOS */
+}
+
+#chat {
+  grid-area: chat;
+  border-left: 0;
+  border-right: 0;
+  border-bottom-color: transparent;
+}
+
+#chat-send {
+  grid-area: chat-send;
+  justify-self: right;
+  background-color: #999;
+  color: #666;
+  border-right: 0;
+}
+
+.chat-user {
+  font-weight: bold;
+  color: #66a;
+}
+
+.chat-user--local {
+  color: #666;
+}
+
+.chat-user--server,
+.chat-delim--server {
+  display: none;
+}
+
+.chat-text--server {
+  color: #aa4;
+}
