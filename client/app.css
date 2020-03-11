@@ -17,7 +17,7 @@ body {
   grid-template-areas:
     'header'
     'chat-log'
-    'game-list'
+    'grid-list'
     'chat-input'
   ;
   grid-template-rows: min-content 1fr 2fr min-content;
@@ -40,8 +40,26 @@ h1 {
   overflow-y: scroll;
 }
 
-#game-list {
-  grid-area: game-list;
+#grid-list {
+  grid-area: grid-list;
+}
+
+.grid-list-item {
+  padding: 2rem;
+  background-color: #444;
+  border-top: 4px solid #666;
+  border-bottom: 4px solid #111;
+}
+
+.grid-list-grid {
+  background-color: #666;
+  border-top: 4px solid #888;
+}
+
+#add-grid {
+  background-color: #223;
+  border-top: 4px solid #335;
+  border-bottom: 4px solid #001;
 }
 
 #chat-input {

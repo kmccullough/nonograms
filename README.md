@@ -24,18 +24,16 @@ For the public and private keys, they can be generated with the
 the application. To use the official keys you must contact the maintainer
 to be added to the git-secrets repo (See https://git-secret.io/).
 
-https://git-secret.io/
-
 # Dev and Deployment
 
 #### Run server on port 3000
 
 ```bash
-node server/grassland.js
+node server/index.js
 ```
 
 or 
 
 ```bash
-nodemon server/grassland.js
+nodemon server/index.js
 ```

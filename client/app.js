@@ -1,5 +1,7 @@
 (function() { 'use strict';
 
+  const { all, one, onEvent, onReady } = lib.dom;
+
   const receive = (s, e, ...a) => {
     console.log('<', e, ...a);
   };
@@ -17,9 +19,9 @@
     document.body.classList.add('mobile');
   }
 
-  lib.dom.onReady(() => {
+  onReady(() => {
     if (lib.env.isMobile && fullscreenMobile) {
-      lib.dom.onEvent(document, 'click', () => {
+      onEvent(document, 'click', () => {
         if (!document.fullscreenElement) {
           document.documentElement.requestFullscreen({ navigationUI: 'hide' });
         }
@@ -27,8 +29,8 @@
     }
 
     let name;
-    const chat = lib.dom.one('#chat');
-    const chatLog = lib.dom.one('#chat-log');
+    const chat = one('#chat');
+    const chatLog = one('#chat-log');
     const sendChat = () => {
       const { value } = chat;
       if (value) {
@@ -36,12 +38,28 @@
         chat.value = '';
       }
     };
-    lib.dom.onEvent(lib.dom.one('#chat'), 'keydown', e => {
+    onEvent(one('#chat'), 'keydown', e => {
       if (e.key === 'Enter') {
         sendChat();
       }
     });
-    lib.dom.onEvent(lib.dom.one('#chat-send'), 'click', sendChat);
+    onEvent(one('#chat-send'), 'click', sendChat);
+
+    all('.grid-list-group').forEach(el =>
+      onEvent(el, 'click', e => {
+        emit(socket, 'chat', 'Grids: ' + el.textContent.trim());
+      })
+    );
+
+    all('.grid-list-grid').forEach(el =>
+      onEvent(el, 'click', e => {
+        emit(socket, 'chat', 'Grid: ' + el.textContent.trim());
+      })
+    );
+
+    onEvent(one('#add-grid'), 'click', e => {
+      emit(socket, 'chat', 'Add Grid');
+    });
 
     const socket = io();
     // Haven't seen this fire yet
