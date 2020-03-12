@@ -25,12 +25,32 @@ body {
 
 #header {
   grid-area: header;
-  border-bottom: 2px solid #444;
+  border-bottom: 2px solid #888;
+  background: #ddd linear-gradient(0, #ccc 0%, #ddd 40%, #eee 120%);
+  color: #111;
 }
 
 h1 {
   font-size: 1.5rem;
   margin: .7rem;
+}
+
+input[type=text] {
+  margin: .5rem;
+  padding: .7rem;
+  font-size: 1.2rem;
+  border: 2px solid #999;
+  border-bottom: 0;
+  box-sizing: border-box;
+  -webkit-appearance: none; /* For iOS */
+  border-radius: 0; /* For iOS */
+}
+
+button {
+  padding: .7rem;
+  font-size: 1.2rem;
+  background: #bbb linear-gradient(0, #aaa 0%, #bbb 40%, #ccc 120%);
+  color: #111;
 }
 
 #chat-log {
@@ -40,26 +60,84 @@ h1 {
   overflow-y: scroll;
 }
 
+#views {
+  position: relative;
+}
+
 #grid-list {
   grid-area: grid-list;
+  overflow-y: scroll;
 }
 
 .grid-list-item {
   padding: 2rem;
-  background-color: #444;
+  background: #444 linear-gradient(0, #333 0%, #444 40%, #555 120%);
   border-top: 4px solid #666;
   border-bottom: 4px solid #111;
 }
 
 .grid-list-grid {
-  background-color: #666;
+  background: #666 linear-gradient(0, #555 0%, #666 40%, #777 120%);
   border-top: 4px solid #888;
 }
 
 #add-grid {
-  background-color: #223;
+  background: #223 linear-gradient(0, #112 0%, #223 40%, #334 120%);
   border-top: 4px solid #335;
   border-bottom: 4px solid #001;
+}
+
+#grid-config {
+  padding: 2rem;
+  position: absolute;
+  bottom: 0;
+}
+
+.grid-name-input,
+.grid-size-inputs,
+.grid-size-inputs label {
+  display: grid;
+  grid-gap: 1rem;
+  align-items: center;
+}
+
+.grid-name-input,
+.grid-size-inputs {
+  margin: 1rem 0;
+}
+
+.grid-name-input input,
+.grid-size-inputs input {
+  width: 100%;
+  margin: 0;
+}
+
+.grid-name-input {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  white-space: nowrap;
+}
+
+.grid-size-inputs {
+  grid-template-columns: 1fr 1fr;
+}
+
+.grid-size-inputs label {
+  grid-template-columns: min-content 1fr;
+}
+
+.grid-size-inputs input {
+  text-align: right;
+}
+
+.actions {
+  float: right;
+}
+
+.actions::after {
+  content: '';
+  display: table;
+  clear: both;
 }
 
 #chat-input {
@@ -92,8 +170,8 @@ h1 {
 #chat-send {
   grid-area: chat-send;
   justify-self: right;
-  background-color: #999;
-  color: #666;
+  background: #bbb linear-gradient(0, #aaa 0%, #bbb 40%, #ccc 120%);
+  color: #555;
   border-right: 0;
 }
 

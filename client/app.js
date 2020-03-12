@@ -20,6 +20,9 @@
   }
 
   onReady(() => {
+    const appEl = one('#app');
+    const viewsEl = one('#views');
+
     if (lib.env.isMobile && fullscreenMobile) {
       onEvent(document, 'click', () => {
         if (!document.fullscreenElement) {
@@ -45,21 +48,93 @@
     });
     onEvent(one('#chat-send'), 'click', sendChat);
 
-    all('.grid-list-group').forEach(el =>
-      onEvent(el, 'click', e => {
-        emit(socket, 'chat', 'Grids: ' + el.textContent.trim());
-      })
-    );
+    const views = {};
+    const registerView = (id, tpl, fn) => {
+      if (views[id]) {
+        return;
+      }
+      views[id] = { id, tpl, fn };
+    };
+    const addView = id => {
+      const view = views[id];
+      if (!view || view.els) {
+        return;
+      }
+      const frag = view.tpl.content.cloneNode(true);
+      view.els = [].slice.call(frag.children);
+      viewsEl.appendChild(frag);
+      if (typeof view.fn === 'function') {
+        view.fn();
+      }
+    };
+    const removeView = id => {
+      const view = views[id];
+      if (!view || !view.els) {
+        return;
+      }
+      view.els.forEach(el => el.remove());
+      view.els = null;
+    };
+    let viewStack = [];
+    const renderView = () => {
+      const last = viewStack[viewStack.length - 1];
+      if (!last) {
+        return;
+      }
+      addView(last);
+    };
+    const pushView = id => {
+      const last = viewStack[viewStack.length - 1];
+      const view = views[id];
+      if (last === id || !view) {
+        return;
+      }
+      if (last) {
+        removeView(last);
+      }
+      viewStack.push(id);
+      renderView();
+    };
+    const popView = id => {
+      const last = viewStack[viewStack.length - 1];
+      if (viewStack.length <= 1 || !last || id && id !== last) {
+        return;
+      }
+      removeView(last);
+      viewStack.pop();
+      renderView();
+    };
 
-    all('.grid-list-grid').forEach(el =>
-      onEvent(el, 'click', e => {
-        emit(socket, 'chat', 'Grid: ' + el.textContent.trim());
-      })
-    );
-
-    onEvent(one('#add-grid'), 'click', e => {
-      emit(socket, 'chat', 'Add Grid');
+    registerView('grid-list', one('#tpl-grid-list'), () => {
+      all('.grid-list-group').forEach(el =>
+        onEvent(el, 'click', e => {
+          popView('grid-config');
+          emit(socket, 'chat', 'Grids: ' + el.textContent.trim());
+        })
+      );
+      all('.grid-list-grid').forEach(el =>
+        onEvent(el, 'click', e => {
+          popView('grid-config');
+          emit(socket, 'chat', 'Grid: ' + el.textContent.trim());
+        })
+      );
+      onEvent(one('#add-grid'), 'click', e => {
+        pushView('grid-config');
+      });
     });
+    registerView('grid-config', one('#tpl-grid-config'), () => {
+      onEvent(one('#grid-config-cancel'), 'click', e => {
+        popView('grid-config');
+      });
+      onEvent(one('#grid-config-ok'), 'click', e => {
+        const name = (one('#grid-name') || {}).value;
+        const width = (one('#grid-width') || {}).value;
+        const height = (one('#grid-height') || {}).value;
+        emit(socket, 'chat', `Add Grid: ${name} (${width}x${height})`);
+        popView('grid-config');
+      });
+    });
+    pushView('grid-list');
 
     const socket = io();
     // Haven't seen this fire yet

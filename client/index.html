@@ -12,7 +12,14 @@
     <div id="header">
       <h1>Nonograms</h1>
     </div>
+    <div id="views"></div>
     <div id="chat-log"></div>
+    <div id="chat-input">
+      <input type="text" id="chat" placeholder="Type to Chat">
+      <button id="chat-send">&gt;</button>
+    </div>
+  </div>
+  <template id="tpl-grid-list">
     <div id="grid-list">
       <div class="grid-list-item grid-list-group">
         Easy Grids (5x5)
@@ -24,11 +31,29 @@
         Add Grid
       </div>
     </div>
-    <div id="chat-input">
-      <input type="text" id="chat" placeholder="Type to Chat">
-      <button id="chat-send">&gt;</button>
+  </template>
+  <template id="tpl-grid-config">
+    <div id="grid-config">
+      <label class="grid-name-input">
+        <span>Grid Name</span>
+        <input type="text" id="grid-name" value="Untitled Grid">
+      </label>
+      <div class="grid-size-inputs">
+        <label>
+          <span>Width</span>
+          <input type="text" id="grid-width" value="10">
+        </label>
+        <label>
+          <span>Height</span>
+          <input type="text" id="grid-height" value="10">
+        </label>
+      </div>
+      <div class="actions">
+        <button id="grid-config-cancel">Cancel</button>
+        <button id="grid-config-ok">OK</button>
+      </div>
     </div>
-  </div>
+  </template>
   <script src="socket.io/socket.io.js"></script>
   <script src="util.js"></script>
   <script src="app.js"></script>
