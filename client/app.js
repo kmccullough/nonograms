@@ -1,6 +1,6 @@
 (function() { 'use strict';
 
-  const { all, one, onEvent, onReady } = lib.dom;
+  const { all, getSize, one, onEvent, onReady } = lib.dom;
 
   const receive = (s, e, ...a) => {
     console.log('<', e, ...a);
@@ -131,8 +131,56 @@
         const width = (one('#grid-width') || {}).value;
         const height = (one('#grid-height') || {}).value;
         emit(socket, 'chat', `Add Grid: ${name} (${width}x${height})`);
-        popView('grid-config');
+        pushView('grid');
       });
+    });
+    registerView('grid', one('#tpl-grid'), () => {
+      const grid = one('#grid');
+      onEvent(one('#grid-back'), 'click', e => {
+        popView('grid');
+      });
+      let unsubscribeResize = () => {};
+      const setCanvasSize = () => {
+        // TODO: cleanup event listener nicelier
+        if (!grid || !grid.parentNode) {
+          unsubscribeResize();
+          return;
+        }
+        const { width, height } = getSize(grid.parentNode);
+        Object.assign(grid, { width, height });
+        const ctx = grid.getContext('2d');
+        const s = 32;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        const o = ctx.lineWidth / 2;
+        ctx.save();
+        ctx.translate(o, o);
+        ctx.moveTo(0, s);
+        ctx.lineTo(0, 0);
+        ctx.lineTo(s, 0);
+        ctx.restore();
+        ctx.save();
+        ctx.translate(-o, o);
+        ctx.moveTo(width, s);
+        ctx.lineTo(width, 0);
+        ctx.lineTo(width - s, 0);
+        ctx.restore();
+        ctx.save();
+        ctx.translate(o, -o);
+        ctx.moveTo(0, height - s);
+        ctx.lineTo(0, height);
+        ctx.lineTo(s, height);
+        ctx.restore();
+        ctx.save();
+        ctx.translate(-o, -o);
+        ctx.moveTo(width, height - s);
+        ctx.lineTo(width, height);
+        ctx.lineTo(width - s, height);
+        ctx.restore();
+        ctx.stroke();
+      };
+      unsubscribeResize = onEvent(window, 'resize', setCanvasSize);
+      setCanvasSize();
     });
     pushView('grid-list');
 

@@ -227,6 +227,14 @@
       return Array.isArray(varName) ? varVals : varVals[0];
     },
     /**
+     * Whether given Element emits events
+     * @param {EventTarget|*} el Value to test
+     * @return {boolean}
+     */
+    isEventTarget(el) {
+      return el instanceof EventTarget;
+    },
+    /**
      * Calls given callback when given element emits given event
      * @param {Element} el
      * @param {string} event
@@ -235,7 +243,7 @@
      */
     onEvent(el, event, callback) {
       let unsubscribe;
-      if (event && domLib.is(el) && fnLib.is(callback)) {
+      if (event && domLib.isEventTarget(el) && fnLib.is(callback)) {
         el.addEventListener(event, callback);
         unsubscribe = () => el.removeEventListener(event, callback);
       } else {
