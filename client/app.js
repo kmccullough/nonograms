@@ -1,6 +1,7 @@
 (function() { 'use strict';
 
   const { all, getSize, one, onEvent, onReady } = lib.dom;
+  const { pathGrid } = draw;
 
   const receive = (s, e, ...a) => {
     console.log('<', e, ...a);
@@ -55,7 +56,7 @@
       }
       views[id] = { id, tpl, fn };
     };
-    const addView = id => {
+    const addView = (id, config) => {
       const view = views[id];
       if (!view || view.els) {
         return;
@@ -64,7 +65,7 @@
       view.els = [].slice.call(frag.children);
       viewsEl.appendChild(frag);
       if (typeof view.fn === 'function') {
-        view.fn();
+        view.fn(config);
       }
     };
     const removeView = id => {
@@ -77,14 +78,25 @@
     };
     let viewStack = [];
     const renderView = () => {
-      const last = viewStack[viewStack.length - 1];
+      const [ last, config ] = viewStack[viewStack.length - 1] || [];
       if (!last) {
         return;
       }
-      addView(last);
+      addView(last, config);
     };
-    const pushView = id => {
-      const last = viewStack[viewStack.length - 1];
+    const getViewConfig = () => {
+      const last = viewStack[viewStack.length - 1] || [];
+      return last && last[1] || {};
+    };
+    const setViewConfig = (config, merge) => {
+      const last = viewStack[viewStack.length - 1] || [];
+      if (!last) {
+        return;
+      }
+      last[1] = merge ? { ...(last[1] || {}), ...config } : config;
+    };
+    const pushView = (id, config) => {
+      const [ last ] = viewStack[viewStack.length - 1] || [];
       const view = views[id];
       if (last === id || !view) {
         return;
@@ -92,11 +104,11 @@
       if (last) {
         removeView(last);
       }
-      viewStack.push(id);
+      viewStack.push([ id, config ]);
       renderView();
     };
     const popView = id => {
-      const last = viewStack[viewStack.length - 1];
+      const [ last ] = viewStack[viewStack.length - 1] || [];
       if (viewStack.length <= 1 || !last || id && id !== last) {
         return;
       }
@@ -122,19 +134,36 @@
         pushView('grid-config');
       });
     });
-    registerView('grid-config', one('#tpl-grid-config'), () => {
+    registerView('grid-config', one('#tpl-grid-config'), config => {
+      config = config || {};
+      const nameEl = one('#grid-name') || {};
+      const widthEl = one('#grid-width') || {};
+      const heightEl = one('#grid-height') || {};
+      nameEl.value = config.name || nameEl.value;
+      widthEl.value = config.width || widthEl.value;
+      heightEl.value = config.height || heightEl.value;
       onEvent(one('#grid-config-cancel'), 'click', e => {
         popView('grid-config');
       });
       onEvent(one('#grid-config-ok'), 'click', e => {
-        const name = (one('#grid-name') || {}).value;
-        const width = (one('#grid-width') || {}).value;
-        const height = (one('#grid-height') || {}).value;
+        const name = nameEl.value;
+        const width = widthEl.value;
+        const height = heightEl.value;
         emit(socket, 'chat', `Add Grid: ${name} (${width}x${height})`);
-        pushView('grid');
+        setViewConfig({
+          name,
+          width,
+          height,
+        });
+        pushView('grid', {
+          name,
+          width,
+          height,
+        });
       });
     });
-    registerView('grid', one('#tpl-grid'), () => {
+    registerView('grid', one('#tpl-grid'), config => {
+      config = config || {};
       const grid = one('#grid');
       onEvent(one('#grid-back'), 'click', e => {
         popView('grid');
@@ -178,6 +207,12 @@
         ctx.lineTo(width - s, height);
         ctx.restore();
         ctx.stroke();
+
+        const gridPos = 32;
+        ctx.beginPath();
+        ctx.fillStyle = '#fff';
+        pathGrid(ctx, gridPos, gridPos, config.width, config.height, 32, 32, [2, 5, 3]);
+        ctx.fill();
       };
       unsubscribeResize = onEvent(window, 'resize', setCanvasSize);
       setCanvasSize();
