@@ -1,6 +1,7 @@
 (function() { 'use strict';
 
   const { all, getSize, one, onEvent, onReady } = lib.dom;
+  const { debounce } = lib.time;
   const { pathGrid } = draw;
 
   const receive = (s, e, ...a) => {
@@ -214,8 +215,10 @@
         pathGrid(ctx, gridPos, gridPos, config.width, config.height, 32, 32, [2, 5, 3]);
         ctx.fill();
       };
-      unsubscribeResize = onEvent(window, 'resize', setCanvasSize);
-      setCanvasSize();
+      const resizeDelay = 200;
+      const debounceResize = debounce(resizeDelay, setCanvasSize);
+      unsubscribeResize = onEvent(window, 'resize', debounceResize);
+      debounceResize();
     });
     pushView('grid-list');
 

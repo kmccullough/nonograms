@@ -495,12 +495,33 @@
       || navigator.userAgent.indexOf('IEMobile') !== -1,
   };
 
+  const timeLib = {
+    debounce(delay, fn) {
+      let last;
+      let waiting;
+      const debounced = (...args) => {
+        let result;
+        const now = performance.now();
+        if (!last || last + delay <= now) {
+          result = fn(...args);
+          waiting = undefined;
+          last = now;
+        } else if (!waiting) {
+          waiting = setTimeout(debounced, delay);
+        }
+        return result;
+      };
+      return debounced;
+    },
+  };
+
   window.lib = {
     dom:     domLib,
     fn:      fnLib,
     img:     imgLib,
     obj:     objLib,
     env:     envLib,
+    time:    timeLib,
   };
 
 })();
