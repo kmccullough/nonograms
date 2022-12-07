@@ -8,7 +8,7 @@
   "author": "Kerry McCullough <subone@subone.org>",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "mongodb": "^3.3.0",
     "socket.io": "^2.2.0"
   },
